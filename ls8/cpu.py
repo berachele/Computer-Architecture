@@ -64,6 +64,36 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+        #read memory address that's stored in register PC, store that result in IR (instruction register)
+        running = True
+
+        while running:
+            ir = self.ram[self.pc]
+
+        #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #depending on value of opcode, perform actions needed for the instruction per LS8 spec (If-elif)
+        #update the PC for next iteration
+        #HLT handler
+        #LDI handler
+        #PRN handler
         pass
     
     def ram_read(self, address):
