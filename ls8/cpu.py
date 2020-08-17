@@ -69,6 +69,7 @@ class CPU:
 
         while running:
             ir = self.ram[self.pc]
+            # ir = self.ram_read(self.pc)
 
             #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
             operand_a = self.pc + 1
@@ -93,10 +94,10 @@ class CPU:
                 print(self.reg[operand_a])
                 self.pc += 2
     
-    def ram_read(self, address):
-        """Should accept address to read and return the value stored there"""
-        return self.ram[address]
+    def ram_read(self, MAR):
+        #Should accept address(MAR) to read and return the value stored there
+        return self.ram[MAR]
 
-    def ram_write(self, address, value):
-        """Should accept a value to write and the address to write it to"""
-        self.ram[address] = value
+    def ram_write(self, MAR, MDR):
+        #Should accept a value(MDR) to write and the address(MAR) to write it to
+        self.ram[MAR] = MDR
