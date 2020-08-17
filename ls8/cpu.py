@@ -70,31 +70,28 @@ class CPU:
         while running:
             ir = self.ram[self.pc]
 
-        #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        #depending on value of opcode, perform actions needed for the instruction per LS8 spec (If-elif)
-        #update the PC for next iteration
-        #HLT handler
-        #LDI handler
-        #PRN handler
-        pass
+            #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
+            operand_a = self.pc + 1
+            operand_b = self.pc + 2
+            #depending on value of opcode, perform actions needed for the instruction per LS8 spec (If-elif)
+            HLT = 0b00000001
+            LDI = 0b10000010
+            PRN = 0b01000111
+            #update the PC for next iteration
+            #HLT handler
+            if ir == HLT:
+                #Halt command--stop the loop
+                running = False
+            #LDI handler
+            if ir == LDI:
+                #sets a specified register to a specified value
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+            #PRN handler
+            if ir == PRN:
+                #prints the specified register's value
+                print(self.reg[operand_a])
+                self.pc += 2
     
     def ram_read(self, address):
         """Should accept address to read and return the value stored there"""
