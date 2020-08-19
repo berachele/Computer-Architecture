@@ -45,7 +45,6 @@ class CPU:
         if address == 0:
             print("Error: Empty program--held no instructions")
             sys.exit(3)
-        print('FINISHED WITH LOAD')
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -82,7 +81,8 @@ class CPU:
         """Run the CPU."""
         #read memory address that's stored in register PC, store that result in IR (instruction register)
         running = True
-
+        self.reg[7] = 0xF4 #SP (Stack Pointer)
+        
         while running:
             ir = self.ram[self.pc]
 
@@ -95,6 +95,8 @@ class CPU:
             LDI = 0b10000010
             PRN = 0b01000111
             MUL = 0b10100010
+            PUSH = 0b01000101
+            POP = 0b01000110
             #update the PC for next iteration
             #HLT handler
             if ir == HLT:
@@ -115,6 +117,22 @@ class CPU:
                 #prints the specified register's value
                 print(self.reg[operand_a])
                 self.pc += 2
+            elif ir == PUSH:
+                print('pushing')
+                pointer = self.reg[7]
+                #decrement SP
+                pointer -= 1
+                #USE RAM WRITE()
+                self.ram_write(pointer, operand_a)
+                #increment pc by steps
+                self.pc += 2
+                print('END pushing')
+            elif ir == POP:
+                print('popping')
+                pointer = self.reg[7]
+                self.ram_read(pointer)
+                self.pc +=2
+                print('END popping')
     
     def ram_read(self, MAR):
         #Should accept address(MAR) to read and return the value stored there
