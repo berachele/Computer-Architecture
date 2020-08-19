@@ -15,23 +15,37 @@ class CPU:
         """Load a program into memory."""
 
         address = 0
+        if len(sys.argv) !=2:
+            print("Error! Proper usage: python3 ls8.py <fileName>")
 
-        # For now, we've just hardcoded a program:
-
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
-
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
-
+        try:
+            with open(sys.argv[1]) as fileName:
+                for line in fileName:
+                    #makes each line
+                    line = line.strip()
+                    #breaks each line into separate strings
+                    temp = line.split()
+                    #extra lines in code, continue
+                    if len(temp) == 0:
+                        continue
+                    #handles lines with comments only
+                    if temp[0][0] == "#":
+                        continue
+                    try:
+                        self.ram[address] = int(temp[0], 2)
+                    #Error handling with invalid number instructions (if has letter in it)
+                    except ValueError:
+                        print("Invalid number: {temp[0]}")
+                        sys.exit(1)
+                    address += 1
+        except FileNotFoundError:
+            print("Error: Couldn't open {sys.argv[1]}")
+            sys.exit(2)
+        
+        if address == 0:
+            print("Error: Empty program--held no instructions")
+            sys.exit(3)
+        print('FINISHED WITH LOAD')
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -69,11 +83,11 @@ class CPU:
 
         while running:
             ir = self.ram[self.pc]
-            # print(f"IR: {ir}")
-            
+
             #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
+
             #depending on value of opcode, perform actions needed for the instruction per LS8 spec (If-elif)
             HLT = 0b00000001
             LDI = 0b10000010
@@ -82,18 +96,14 @@ class CPU:
             #HLT handler
             if ir == HLT:
                 #Halt command--stop the loop
-                print('HALT--ending loop')
                 running = False
             #LDI handler
             elif ir == LDI:
                 #sets a specified register to a specified value
-                # print(f'adding {operand_b} at position {operand_a}')
-                # print(f'{self.reg[operand_a]}, {operand_b}')
                 self.reg[operand_a] = operand_b
                 self.pc += 3
             #PRN handler
             elif ir == PRN:
-                # print(f'PRN--> {self.reg[operand_a]}')
                 #prints the specified register's value
                 print(self.reg[operand_a])
                 self.pc += 2
