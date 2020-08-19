@@ -53,6 +53,8 @@ class CPU:
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
+        elif op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -92,6 +94,7 @@ class CPU:
             HLT = 0b00000001
             LDI = 0b10000010
             PRN = 0b01000111
+            MUL = 0b10100010
             #update the PC for next iteration
             #HLT handler
             if ir == HLT:
@@ -101,6 +104,11 @@ class CPU:
             elif ir == LDI:
                 #sets a specified register to a specified value
                 self.reg[operand_a] = operand_b
+                self.pc += 3
+            #MULTIPLY handler
+            elif ir == MUL:
+                #the call alu with those values as args
+                self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
             #PRN handler
             elif ir == PRN:
