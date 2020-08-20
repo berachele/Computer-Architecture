@@ -80,7 +80,7 @@ class CPU:
     def run(self):
         """Run the CPU."""
         running = True
-        # self.reg[7] = 0xF4 #SP (Stack Pointer)
+        self.reg[7] = 0xF4 #SP (Stack Pointer)
         # pointer = self.reg[7]
         
         while running:
@@ -128,7 +128,7 @@ class CPU:
             
             elif ir == POP:
                 print('IN POP')
-                value = self.ram_read(self.reg[7])
+                self.reg[operand_a] = self.ram_read(self.reg[7])
                 self.reg[7] += 1
                 self.pc +=2
 
