@@ -81,12 +81,7 @@ class CPU:
     def run(self):
         """Run the CPU."""
         running = True
-        # self.reg[7] = 0xF4 #SP (Stack Pointer)
-        print(f'POINTER--> {self.pointer}')
-        print(f'REG--> {self.reg}')
-        print(f'RAM--> {self.ram[0xf0:0xf4]}')
 
-        
         while running:
             ir = self.ram[self.pc]
 
@@ -102,6 +97,8 @@ class CPU:
             MUL = 0b10100010
             PUSH = 0b01000101
             POP = 0b01000110
+            CALL = 0b01010000
+            RET = 0b00010001
             #update the PC for next iteration
             #HLT handler
             if ir == HLT:
@@ -128,9 +125,33 @@ class CPU:
                 self.pc += 2
             
             elif ir == POP:
+                #taking the value of pointer using ram ream and setting it to reg at that operand
                 self.reg[operand_a] = self.ram_read(self.pointer)
+                #increment pointer by one
                 self.pointer += 1
+                #increment steps by 2
                 self.pc +=2
+
+            elif ir == CALL:
+                #PUSH return address
+                print('in CALL')
+                ret_address = self.ram[self.pointer]
+                print(f'return address: {ret_address}')
+                self.pointer -= 1
+                self.ram[self.pointer] = ret_address
+                print(f'RAM --> {self.ram[0xf4: 0xf0]}')
+                #Call the subroutine
+                self.pc = self.reg[operand_a]
+                print('end of CALL')
+
+            elif ir == RET:
+                # POP the return address off stack
+                print('in RET')
+                ret_address = self.ram[self.pointer]
+                self.pointer += 1
+                # Set the PC to return address
+                self.pc = ret_address
+                print('end of RET')
 
     
     def ram_read(self, MAR):
