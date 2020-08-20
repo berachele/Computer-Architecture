@@ -10,6 +10,7 @@ class CPU:
         self.reg = [0] * 8
         self.ram = [0] * 256
         self.pc = 0
+        self.pointer = 0xF4
 
     def load(self):
         """Load a program into memory."""
@@ -80,8 +81,11 @@ class CPU:
     def run(self):
         """Run the CPU."""
         running = True
-        self.reg[7] = 0xF4 #SP (Stack Pointer)
-        # pointer = self.reg[7]
+        # self.reg[7] = 0xF4 #SP (Stack Pointer)
+        print(f'POINTER--> {self.pointer}')
+        print(f'REG--> {self.reg}')
+        print(f'RAM--> {self.ram[0xf0:0xf4]}')
+
         
         while running:
             ir = self.ram[self.pc]
@@ -105,7 +109,6 @@ class CPU:
                 running = False
             #LDI handler
             elif ir == LDI:
-                print('IN LDI')
                 #sets a specified register to a specified value
                 self.reg[operand_a] = operand_b
                 self.pc += 3
@@ -116,20 +119,17 @@ class CPU:
                 self.pc += 3
             #PRN handler
             elif ir == PRN:
-                print('IN PRN')
                 print(self.reg[operand_a])
                 self.pc += 2
 
             elif ir == PUSH:  
-                print('in PUSH')           
-                self.reg[7] -= 1
-                self.ram_write(self.reg[operand_a], self.reg[7])
+                self.pointer -= 1
+                self.ram_write(self.pointer, self.reg[operand_a])
                 self.pc += 2
             
             elif ir == POP:
-                print('IN POP')
-                self.reg[operand_a] = self.ram_read(self.reg[7])
-                self.reg[7] += 1
+                self.reg[operand_a] = self.ram_read(self.pointer)
+                self.pointer += 1
                 self.pc +=2
 
     
