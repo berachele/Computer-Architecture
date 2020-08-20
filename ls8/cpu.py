@@ -79,13 +79,14 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        #read memory address that's stored in register PC, store that result in IR (instruction register)
         running = True
-        self.reg[7] = 0xF4 #SP (Stack Pointer)
+        # self.reg[7] = 0xF4 #SP (Stack Pointer)
+        # pointer = self.reg[7]
         
         while running:
             ir = self.ram[self.pc]
 
+            #read memory address that's stored in register PC, store that result in IR (instruction register)
             #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
@@ -104,6 +105,7 @@ class CPU:
                 running = False
             #LDI handler
             elif ir == LDI:
+                print('IN LDI')
                 #sets a specified register to a specified value
                 self.reg[operand_a] = operand_b
                 self.pc += 3
@@ -114,25 +116,22 @@ class CPU:
                 self.pc += 3
             #PRN handler
             elif ir == PRN:
-                #prints the specified register's value
+                print('IN PRN')
                 print(self.reg[operand_a])
                 self.pc += 2
-            elif ir == PUSH:
-                print('pushing')
-                pointer = self.reg[7]
-                #decrement SP
-                pointer -= 1
-                #USE RAM WRITE()
-                self.ram_write(pointer, operand_a)
-                #increment pc by steps
+
+            elif ir == PUSH:  
+                print('in PUSH')           
+                self.reg[7] -= 1
+                self.ram_write(self.reg[operand_a], self.reg[7])
                 self.pc += 2
-                print('END pushing')
+            
             elif ir == POP:
-                print('popping')
-                pointer = self.reg[7]
-                self.ram_read(pointer)
+                print('IN POP')
+                value = self.ram_read(self.reg[7])
+                self.reg[7] += 1
                 self.pc +=2
-                print('END popping')
+
     
     def ram_read(self, MAR):
         #Should accept address(MAR) to read and return the value stored there
