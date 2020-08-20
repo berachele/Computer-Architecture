@@ -99,32 +99,37 @@ class CPU:
             POP = 0b01000110
             CALL = 0b01010000
             RET = 0b00010001
+            ADD = 0b10100000
             #update the PC for next iteration
             #HLT handler
             if ir == HLT:
-                print('in HALT')
+                # print('in HALT')
                 #Halt command--stop the loop
                 running = False
             #LDI handler
             elif ir == LDI:
-                print('in LDI')
+                # print('in LDI')
                 #sets a specified register to a specified value
                 self.reg[operand_a] = operand_b
                 self.pc += 3
             #MULTIPLY handler
             elif ir == MUL:
-                print('in MUL')
+                # print('in MUL')
                 #the call alu with those values as args
                 self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
+            elif ir == ADD:
+                # print('in ADD')
+                self.alu("ADD", operand_a, operand_b)
+                self.pc += 3
             #PRN handler
             elif ir == PRN:
-                print('in PRN')
+                # print('in PRN')
                 print(self.reg[operand_a])
                 self.pc += 2
 
             elif ir == PUSH:  
-                print('in PUSH')
+                # print('in PUSH')
                 #decrementing pointer by 1
                 self.pointer -= 1
                 #taking the register and writing it into the value where pointer is
@@ -133,7 +138,7 @@ class CPU:
                 self.pc += 2
             
             elif ir == POP:
-                print('in POP')
+                # print('in POP')
                 #taking the value of pointer using ram ream and setting it to reg at that operand
                 self.reg[operand_a] = self.ram_read(self.pointer)
                 #increment pointer by one
@@ -143,30 +148,30 @@ class CPU:
 
             elif ir == CALL:
                 #PUSH return address
-                print('in CALL')
-                print(f'self.pointer: {self.pointer}')
-                print(f'self.pc: {self.pc}')
+                # print('in CALL')
+                # print(f'self.pointer: {self.pointer}')
+                # print(f'self.pc: {self.pc}')
                 ret_address = self.pc + 2
-                print(f'return address: {ret_address}')
+                # print(f'return address: {ret_address}')
                 self.pointer -= 1
-                print(f'AGAIN pointer -1: {self.pointer}')
+                # print(f'AGAIN pointer -1: {self.pointer}')
                 self.ram[self.pointer] = ret_address
-                print(f'RAM[pointer] {self.ram[self.pointer]}')
-                print(f'RAM --> {self.ram[0xF0:0xF4]}')
-                print(f'REG --> {self.reg}')
+                # print(f'RAM[pointer] {self.ram[self.pointer]}')
+                # print(f'RAM --> {self.ram[0xF0:0xF4]}')
+                # print(f'REG --> {self.reg}')
                 #Call the subroutine
                 self.pc = self.reg[operand_a]
-                print('end of CALL')
+                # print('end of CALL')
 
             elif ir == RET:
                 # POP the return address off stack
-                print('in RET')
+                # print('in RET')
                 ret_address = self.ram[self.pointer]
                 self.pointer += 1
                 # Set the PC to return address
                 self.pc = ret_address
-                print(f'ret_address: {ret_address}')
-                print('end of RET')
+                # print(f'ret_address: {ret_address}')
+                # print('end of RET')
 
     
     def ram_read(self, MAR):
