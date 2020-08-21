@@ -194,12 +194,11 @@ class CPU:
                 self.pc = ret_address
             #JMP
             elif ir == JMP:
-                print('in JMP')
-                pass
-                exit(0)
                 #takes in argument of register
                 #JUMP to the address stored in the given register
                 #Set the PC to the address stored in the given register
+                print('in JMP')
+                self.pc = self.reg[operand_a]
             #JEQ
             elif ir == JEQ:
                 print('in JEQ')
@@ -221,9 +220,13 @@ class CPU:
                 #if E flag is 0, jump to the address stroed in given register
                 print('in JNE')
                 print(f'Flag: {self.fl}')
-                if self.fl == 0b000 or 0b100 or 0b010:
+                if self.fl == 0b001:
+                    self.pc += 2
+                    print(f'E is TRUE, continue')
+                elif self.fl == 0b000 or 0b100 or 0b010:
                     #Set PC to that address
                     self.pc = self.reg[operand_a]
+                    print(f'restrictions: IF Flag is: {0b000}, {0b100}, or {0b010}')
                     print(f'E is 0/False, Jumping: {self.pc}')
                 else:
                     self.pc += 2
