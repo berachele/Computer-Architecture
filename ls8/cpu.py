@@ -55,6 +55,11 @@ class CPU:
         #elif op == "SUB": etc
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
+        #CMP function -- takes in two arguments as regA and regB
+        #If they are equal set the Edqual flag to 1, otherwise 0
+        #if regA < regB set Less than L flag to 1, otherwise 0
+        #if regA > regB, set the Greater than G flag to 1 otherwise, 0
+        # 00000LGE --> FL bits (last 3 digits)
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -100,6 +105,9 @@ class CPU:
             CALL = 0b01010000
             RET = 0b00010001
             ADD = 0b10100000
+            #JMP = 
+            #JEQ =
+            #JNE =  
             #update the PC for next iteration
             #HLT handler
             if ir == HLT:
@@ -151,7 +159,19 @@ class CPU:
                 self.pointer += 1
                 # Set the PC to return address
                 self.pc = ret_address
-            
+            #JMP
+                #takes in argument of register
+                #JUMP to the address stored in the given register
+                #Set the PC to the address stored in the given register
+            #JEQ
+                #takes in argument of register
+                #if E flag is 1 (true), jump to the address stored in the given register
+                #pc will be reg address
+            #JNE
+                #takes in argument of a register
+                #if E flag is 0, jump to the address stroed in given register
+                #Set PC to that address
+
     def ram_read(self, MAR):
         #Should accept address(MAR) to read and return the value stored there
         return self.ram[MAR]
