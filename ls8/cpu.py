@@ -61,19 +61,13 @@ class CPU:
             # 00000LGE --> FL bits (last 3 digits)
             #If they are equal set the Equal flag E to 1, otherwise 0
             if self.reg[reg_a] == self.reg[reg_b]:
-                print(f'EQUAL --> A:{self.reg[reg_a]} B: {self.reg[reg_b]}')
                 self.fl = 0b001
-                print(f'flag: {self.fl}')
             #if regA < regB set Less than L flag to 1, otherwise 0
             elif self.reg[reg_a] < self.reg[reg_b]:
-                print(f'LESS THAN --> A:{self.reg[reg_a]} B: {self.reg[reg_b]}')
                 self.fl = 0b100
-                print(f'flag: {self.fl}')
             #if regA > regB, set the Greater than G flag to 1 otherwise, 0
             elif self.reg[reg_a] > self.reg[reg_b]:
-                print(f'GREATER --> A:{self.reg[reg_a]} B: {self.reg[reg_b]}')
                 self.fl = 0b010
-                print(f'flag: {self.fl}')
 
         else:
             raise Exception("Unsupported ALU operation")
@@ -104,7 +98,7 @@ class CPU:
 
         while running:
             ir = self.ram[self.pc]
-            print(f'current PC: {self.pc}')
+
             #read memory address that's stored in register PC, store that result in IR (instruction register)
             #read bytes at PC+1 and PC+2 from RAM into variables operand_a and operand_b in case they're needed
             operand_a = self.ram_read(self.pc + 1)
@@ -127,40 +121,30 @@ class CPU:
             #update the PC for next iteration
             #HLT handler
             if ir == HLT:
-                print('in HLT')
                 #Halt command--stop the loop
                 running = False
             #LDI handler
             elif ir == LDI:
-                print('in LDI')
                 #sets a specified register to a specified value
                 self.reg[operand_a] = operand_b
                 self.pc += 3
-                print(f'setting REG: {operand_a} to = {operand_b}')
             #MULTIPLY handler
             elif ir == MUL:
-                print('in MUL')
                 #the call alu with those values as args
                 self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
             #Saw needed an ADD handler
             elif ir == CMP:
-                print('in CMP')
                 self.alu("CMP", operand_a, operand_b)
-                self.pc += 3
-                print('out of CMP')
-                
+                self.pc += 3                
             elif ir == ADD:
-                print('in ADD')
                 self.alu("ADD", operand_a, operand_b)
                 self.pc += 3
             #PRN handler
             elif ir == PRN:
-                print('in PRN')
                 print(self.reg[operand_a])
                 self.pc += 2
             elif ir == PUSH: 
-                print('in PUSH')
                 #decrementing pointer by 1
                 self.pointer -= 1
                 #taking the register and writing it into the value where pointer is
@@ -168,7 +152,6 @@ class CPU:
                 #increment steps by 2
                 self.pc += 2
             elif ir == POP:
-                print('in POP')
                 #taking the value of pointer using ram ream and setting it to reg at that operand
                 self.reg[operand_a] = self.ram_read(self.pointer)
                 #increment pointer by one
@@ -176,7 +159,6 @@ class CPU:
                 #increment steps by 2
                 self.pc +=2
             elif ir == CALL:
-                print('in CALL')
                 #PUSH return address into the stack
                 #return address is the instructions AFTER the call
                 ret_address = self.pc + 2
@@ -186,7 +168,6 @@ class CPU:
                 #Call the subroutine
                 self.pc = self.reg[operand_a]
             elif ir == RET:
-                print('in RET')
                 # POP the return address off stack
                 ret_address = self.ram[self.pointer]
                 self.pointer += 1
@@ -197,40 +178,28 @@ class CPU:
                 #takes in argument of register
                 #JUMP to the address stored in the given register
                 #Set the PC to the address stored in the given register
-                print('in JMP')
                 self.pc = self.reg[operand_a]
             #JEQ
             elif ir == JEQ:
-                print('in JEQ')
-                print(f'current PC: {self.pc}')
                 #takes in argument of register
                 #if E flag is 1 (true), jump to the address stored in the given register
                 if self.fl == 0b001:
                     #pc will be reg address
                     self.pc = self.reg[operand_a]
-                    print(f'E is True, new address: {self.pc}')
                 else:
                     self.pc += 2
-                    print(f'E is 0, continue')
 
             #JNE
             elif ir == JNE:
-                print(f'current PC: {self.pc}')
                 #takes in argument of a register
                 #if E flag is 0, jump to the address stroed in given register
-                print('in JNE')
-                print(f'Flag: {self.fl}')
                 if self.fl == 0b001:
                     self.pc += 2
-                    print(f'E is TRUE, continue')
                 elif self.fl == 0b000 or 0b100 or 0b010:
                     #Set PC to that address
                     self.pc = self.reg[operand_a]
-                    print(f'restrictions: IF Flag is: {0b000}, {0b100}, or {0b010}')
-                    print(f'E is 0/False, Jumping: {self.pc}')
                 else:
                     self.pc += 2
-                    print(f'E is 1, continue')
 
 
     def ram_read(self, MAR):
