@@ -50,10 +50,8 @@ class CPU:
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
-
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
         #CMP function -- takes in two arguments as regA and regB
@@ -68,6 +66,32 @@ class CPU:
             #if regA > regB, set the Greater than G flag to 1 otherwise, 0
             elif self.reg[reg_a] > self.reg[reg_b]:
                 self.fl = 0b010
+
+        #STRETCH
+        elif op == "AND":
+            if self.reg[reg_a] & self.reg[reg_b]:
+                return True
+            return False
+        elif op == "OR":
+            if self.reg[reg_a] | self.reg[reg_b]:
+                return True
+            return False
+        elif op == "XOR":
+            if self.reg[reg_a] ^ self.reg[reg_b]:
+                return True 
+            return False
+        elif op == "NOT":
+            if self.reg[reg_a] != self.reg[reg_b]:
+                return True 
+            return False
+        elif op == "SHL":
+            self.reg[reg_a] << 1
+            self.reg[reg_b] << 1
+        elif op == "SHR":
+            self.reg[reg_a] >> 1
+            self.reg[reg_b] >> 1
+        elif op == "MOD":
+            self.reg[reg_a] % self.reg[reg_b]
 
         else:
             raise Exception("Unsupported ALU operation")
